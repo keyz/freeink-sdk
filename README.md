@@ -164,3 +164,12 @@ closed-source or commercial derivatives freely.
 
 Derived in part from the MIT-licensed OpenX4 E-Paper Community SDK; that
 attribution is retained in `NOTICE`.
+
+### Commercial use & sponsorship
+
+Commercial use is welcome and completely free — the MIT license asks nothing of
+you. That said, if FreeInk powers a product you sell, please consider
+**[sponsoring the project](https://app.royalty.dev/Free-Ink/freeink-sdk)** to
+help fund ongoing maintenance, new device support, and waveform tuning. It's
+entirely voluntary and always appreciated. Sponsorship or support enquiries:
+hello@freeink.org.
