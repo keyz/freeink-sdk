@@ -1,0 +1,10 @@
+{
+  "name": "SDCardManager",
+  "version": "2.0.0",
+  "description": "FreeInk SD card manager: SdFat-backed singleton with app-friendly read/write helpers and PMIC SD-power sequencing. SDMMC backend is a documented follow-up.",
+  "keywords": "sd, sdfat, storage, fs",
+  "authors": [{"name": "FreeInk SDK Contributors"}],
+  "dependencies": {},
+  "platforms": "espressif32",
+  "frameworks": ["arduino"]
+}

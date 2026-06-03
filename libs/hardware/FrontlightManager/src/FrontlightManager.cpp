@@ -1,0 +1,48 @@
+#include "FrontlightManager.h"
+
+namespace {
+uint32_t maxDuty(uint8_t bits) { return (1u << bits) - 1u; }
+}  // namespace
+
+void FrontlightManager::begin() {
+  const auto& fl = BoardConfig::ACTIVE.frontlight;
+  if (fl.gpio == BoardConfig::PIN_UNASSIGNED) return;
+
+#if defined(ARDUINO) && ESP_ARDUINO_VERSION_MAJOR >= 3
+  // Arduino-ESP32 3.x LEDC API.
+  ledcAttach(fl.gpio, fl.pwmFrequency, fl.pwmResolutionBits);
+#else
+  // Arduino-ESP32 2.x fallback.
+  ledcSetup(0, fl.pwmFrequency, fl.pwmResolutionBits);
+  ledcAttachPin(fl.gpio, 0);
+#endif
+  _begun = true;
+  setBrightness(0);
+}
+
+void FrontlightManager::setBrightness(uint8_t percent) {
+  const auto& fl = BoardConfig::ACTIVE.frontlight;
+  if (!_begun || fl.gpio == BoardConfig::PIN_UNASSIGNED) return;
+  if (percent > 100) percent = 100;
+  _brightness = percent;
+  if (percent > 0) _lastBrightness = percent;
+
+  const uint32_t full = maxDuty(fl.pwmResolutionBits);
+  uint32_t duty = (static_cast<uint32_t>(percent) * full) / 100u;
+  if (!fl.activeHigh) duty = full - duty;
+
+#if defined(ARDUINO) && ESP_ARDUINO_VERSION_MAJOR >= 3
+  ledcWrite(fl.gpio, duty);
+#else
+  ledcWrite(0, duty);
+#endif
+}
+
+void FrontlightManager::off() { setBrightness(0); }
+void FrontlightManager::on() { setBrightness(_lastBrightness); }
+
+void FrontlightManager::setColorTemperature(uint8_t warmPercent) {
+  // TODO(de-link): drive the warm/cool boost-driver channels (GPIO6/7) with a
+  // make-before-break blend. Scaffold only; records intent for now.
+  _warmPercent = warmPercent > 100 ? 100 : warmPercent;
+}
